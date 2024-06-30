@@ -1,3 +1,11 @@
 #logging:
 #  level:
 #    com.jon: info
+
+server:
+  servlet:
+    encoding:
+      charset: utf-8
+      force: true
+      enabled: true
+  port: 8088
