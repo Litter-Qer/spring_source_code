@@ -58,7 +58,10 @@ public class MyBeanFactory {
 
         // bean post processors, used to extend features of bean life cycle, such as @Autowired, @Resource...
         // add bean post processors to bean factory
-        beanFactory.getBeansOfType(BeanPostProcessor.class).values().forEach(beanFactory::addBeanPostProcessor);
+        for (BeanPostProcessor beanPostProcessor : beanFactory.getBeansOfType(BeanPostProcessor.class).values()) {
+            log.info(">>>>>>>>>>>> bean post process <<<<<<<<<<<<<: {}", beanPostProcessor.getClass().getName());
+            beanFactory.addBeanPostProcessor(beanPostProcessor);
+        }
 
         // create beans before using getBean. creates all singleton beans
         beanFactory.preInstantiateSingletons();
