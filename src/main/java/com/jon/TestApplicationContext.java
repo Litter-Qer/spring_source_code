@@ -3,13 +3,23 @@ package com.jon;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
+import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletRegistrationBean;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
+import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @Log4j2
 public class TestApplicationContext {
@@ -18,11 +28,14 @@ public class TestApplicationContext {
 //        testClassPathXmlApplicationContext();
 //        testFileSystemXmlApplicationContext();
 //        testAnnotationConfigApplicationContext();
-        testAnnotationConfigServletWebServerApplicationContext();
+//        testAnnotationConfigServletWebServerApplicationContext();
     }
 
     private static void testAnnotationConfigServletWebServerApplicationContext() {
-        AnnotationConfigServletWebServerApplicationContext context = new AnnotationConfigServletWebServerApplicationContext();
+        AnnotationConfigServletWebServerApplicationContext context = new AnnotationConfigServletWebServerApplicationContext(WebConfig.class);
+        for (String name : context.getBeanDefinitionNames()) {
+            log.info("Bean name: {}", name);
+        }
     }
 
     /**
@@ -72,6 +85,48 @@ public class TestApplicationContext {
 
         Bean1 bean1 = context.getBean(Bean2.class).getBean1();
         log.info("Bean1 ---> {}", bean1);
+    }
+
+    @Configuration
+    static class WebConfig {
+        /**
+         * servlet factory
+         *
+         * @return
+         */
+        @Bean
+        public ServletWebServerFactory servletWebServerFactory() {
+            return new TomcatServletWebServerFactory();
+        }
+
+        /**
+         * Pre controller
+         *
+         * @return
+         */
+        @Bean
+        public DispatcherServlet dispatcherServlet() {
+            return new DispatcherServlet();
+        }
+
+        /**
+         * register dispatcher to servlet web server
+         *
+         * @param dispatcherServlet
+         * @return
+         */
+        @Bean
+        public DispatcherServletRegistrationBean registrationBean(DispatcherServlet dispatcherServlet) {
+            return new DispatcherServletRegistrationBean(dispatcherServlet, "/");
+        }
+
+        @Bean("/hello")
+        public Controller controller1() {
+            return (request, response) -> {
+                response.getWriter().println("Controller 1 Response");
+                return null;
+            };
+        }
     }
 
     @Configuration
