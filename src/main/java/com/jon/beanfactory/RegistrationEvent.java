@@ -1,4 +1,4 @@
-package com.jon;
+package com.jon.beanfactory;
 
 import org.springframework.context.ApplicationEvent;
 

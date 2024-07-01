@@ -1,4 +1,4 @@
-package com.jon;
+package com.jon.beanfactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
