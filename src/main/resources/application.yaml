@@ -1,6 +1,6 @@
-logging:
-  level:
-    com.jon: debug
+#logging:
+#  level:
+#    com.jon: debug
 
 server:
   servlet:
